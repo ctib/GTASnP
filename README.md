@@ -1,0 +1,269 @@
+# Nachhaltigkeitskarte Kiel
+### Interaktive Karte nachhaltiger Gebäude in Kiel
+**Hochschule für Angewandte Wissenschaften Kiel · Fachbereich Medien / Bauwesen**
+**B.A. Architektur · Schwerpunkt Green Building**
+
+---
+
+## Projektkontext
+
+Diese Webanwendung ist das semesterübergreifende Portfolio-Produkt zweier Lehrveranstaltungen im Schwerpunkt Green Building:
+
+| Modul | Semester | Beitrag zur Karte |
+|---|---|---|
+| **Geschichte & Theorie des nachhaltigen Planens** (27210) | 6. Sem. (SoSe) | Gebäudebewertung + A4-Flyer (grüne Farbwelt) |
+| **Geschichte & Theorie der Architektur und Stadt I** | 1. Sem. (WiSe) | Gebäudebewertung + A4-Flyer (blaue Farbwelt) |
+
+Jede Kohorte trägt pro Semester mind. 1 Gebäude mit vollständiger Dokumentation bei. Die Karte wächst damit kontinuierlich und wird zum lebendigen Stadtarchiv nachhaltiger Kieler Architektur.
+
+---
+
+## Funktionale Anforderungen
+
+### Kartenansicht (öffentlich)
+- Interaktive Karte von Kiel auf Basis von **Leaflet.js + OpenStreetMap-Kacheln**
+- Gebäude als **Marker** mit Farbcodierung nach Herkunftsmodul (grün = Modul 27210 / blau = Sem-1-Modul)
+- **Popup** pro Marker mit:
+  - Gebäudename, Adresse, Jahr
+  - Kurztext Nachhaltigkeitsbewertung
+  - Performanceparameter (kW Heizlast, MWh Wärmebedarf, Embodied Carbon, Carbon Footprint)
+  - Thumbnail des A4-Flyers (verlinkt auf PDF-Download)
+  - Semester / Kohorte
+- **Filterleiste**: nach Modul, Semester, Nachhaltigkeitskategorie (ökologisch / ökonomisch / sozial)
+- **Suchfeld**: Gebäudename oder Adresse
+- Vollständig **responsiv** (Desktop + Tablet + Mobile)
+
+### Flyer-Vorlage (Download)
+- A4-Doppelseite als Druckvorlage (PDF + Quelldatei)
+- Zwei Farbvarianten: **Grün** (Modul 27210) · **Blau** (Sem-1-Modul)
+- Einheitliches Layout gemäß bestehendem Template (siehe `/templates/`)
+
+### Upload-Workflow (Studierende)
+- Einfaches **Upload-Formular** (kein Login erforderlich):
+  - Gebäudedaten (Name, Adresse, Koordinaten via Karten-Picker)
+  - Performanceparameter (Formularfelder mit Einheitenangabe)
+  - PDF-Upload (A4-Flyer)
+  - Semesterangabe + Modulzuordnung
+- Einträge landen zunächst im Status `pending` in Supabase
+- **Freigabe durch Dozenten** über einfaches Admin-Panel (passwortgeschützt)
+- Nach Freigabe erscheint Gebäude automatisch auf der Karte
+
+### Admin-Panel (passwortgeschützt)
+- Liste aller `pending` Einträge mit Vorschau
+- Freigeben / Ablehnen (mit optionaler Kommentarfunktion)
+- Bearbeiten bestehender Einträge
+- Export aller Daten als CSV / GeoJSON
+
+---
+
+## Technologie-Stack
+
+```
+Frontend       Leaflet.js 1.9+  ·  Vanilla JS (ES Modules)  ·  CSS Custom Properties
+Kacheln        OpenStreetMap (tile.openstreetmap.org) – keine API-Kosten
+Backend        Supabase (PostgreSQL + Storage + Auth)
+Hosting        GitHub Pages (statisches Frontend)
+Assets         Supabase Storage (PDF-Flyer, Thumbnails)
+Versionierung  Git / GitHub – GeoJSON wächst mit dem Repository
+Schrift        Verdana (CD-Ersatzschrift der HAW Kiel, systemweit verfügbar)
+```
+
+Bewusst **kein Framework** (kein React, kein Vue) – der Stack soll für Architektur-Studierende
+und Lehrende langfristig wartbar und verständlich bleiben.
+
+### DSGVO / Datenschutz
+
+- **Keine Cookies** – die Anwendung setzt keinerlei Cookies
+- **Keine externen Fonts** – Verdana als Systemschrift, kein Google Fonts
+- **Self-Hosted Vendor-Libs** – Leaflet.js und Supabase.js liegen im `/vendor/`-Ordner, kein CDN-Load
+- **OSM-Kacheln**: Einzige externe Datenübermittlung – Kartenkacheln werden von `tile.openstreetmap.org` geladen (IP-Adresse wird übermittelt). Hinweis wird dem Nutzer angezeigt.
+- **Supabase**: Gebäudedaten werden von Supabase geladen (Anon Key, öffentlich lesbar, RLS-geschützt)
+
+### Corporate Design
+
+Gestaltung orientiert sich am **CD-Manual der HAW Kiel** (Stand 12/2025):
+- Markenfarbe **HAW-Blau** (`#00305D`) im Header
+- **Verdana** als Ersatz-/Systemschrift (Hausschrift ITC Officina ist lizenzpflichtig)
+- Modulfarben Grün (`#2D6A4F`) und Blau (`#1F4E79`) für Marker-Unterscheidung
+
+---
+
+## Projektstruktur
+
+```
+nachhaltigkeitskarte-kiel/
+│
+├── index.html                  # Einstiegspunkt – Kartenansicht
+├── upload.html                 # Upload-Formular für Studierende
+├── admin.html                  # Admin-Panel (Freigabe-Workflow)
+│
+├── css/
+│   ├── main.css                # Globale Styles, Custom Properties (Farben, Fonts)
+│   ├── map.css                 # Kartenspezifische Styles
+│   ├── upload.css              # Formular-Styles
+│   └── admin.css               # Admin-Styles
+│
+├── js/
+│   ├── map.js                  # Leaflet-Initialisierung, Marker, Popup, Filter
+│   ├── upload.js               # Upload-Formular-Logik, Supabase-Insert
+│   ├── admin.js                # Admin-Panel-Logik, Freigabe-Workflow
+│   └── supabase-client.js      # Supabase-Client-Konfiguration
+│
+├── data/
+│   └── gebaeude.geojson        # Alle freigegebenen Gebäude (Fallback / Backup)
+│                               # Wird bei jedem Merge aus Supabase regeneriert
+│
+├── templates/
+│   ├── flyer-gruen-A4.pdf      # Druckvorlage Modul 27210 (grün)
+│   ├── flyer-blau-A4.pdf       # Druckvorlage Sem-1-Modul (blau)
+│   └── flyer-source/           # Quelldateien
+│
+├── assets/
+│   ├── icons/                  # Marker-Icons (grün / blau / pending)
+│   └── haw-logo.svg
+│
+├── .env.example                # Supabase URL + Anon Key (nie committen!)
+├── .gitignore
+└── README.md
+```
+
+---
+
+## Supabase Datenbankschema
+
+```sql
+create table gebaeude (
+  id               uuid primary key default gen_random_uuid(),
+  created_at       timestamptz default now(),
+
+  -- Inhalt
+  name             text not null,
+  adresse          text not null,
+  lat              float8 not null,
+  lng              float8 not null,
+  baujahr          int,
+  beschreibung     text,
+  bewertung_kurz   text,           -- max. 300 Zeichen für Popup
+
+  -- Performanceparameter
+  heizlast_kw      float8,         -- kW
+  waermebedarf_mwh float8,         -- MWh/a
+  embodied_carbon  float8,         -- kgCO2e/m²
+  carbon_footprint float8,         -- tCO2e/a
+
+  -- Klassifikation
+  modul            text check (modul in ('27210', 'GeschTheorie1')),
+  semester         text,           -- z.B. "SoSe 2026"
+  kategorie        text[],         -- ['oekologisch', 'oekonomisch', 'sozial']
+
+  -- Assets
+  flyer_url        text,           -- Supabase Storage URL
+  thumbnail_url    text,
+
+  -- Workflow
+  status           text default 'pending' check (status in ('pending', 'approved', 'rejected')),
+  dozent_notiz     text
+);
+
+-- Row Level Security
+alter table gebaeude enable row level security;
+
+-- Öffentlich lesbar: nur approved
+create policy "public_read" on gebaeude
+  for select using (status = 'approved');
+
+-- Jeder darf inserieren (Upload-Formular ohne Login)
+create policy "public_insert" on gebaeude
+  for insert with check (status = 'pending');
+
+-- Admin darf alles (via Service Role Key, nur serverseitig)
+```
+
+---
+
+## Umgebungsvariablen
+
+```bash
+# .env.example
+SUPABASE_URL=https://xxxxxxxxxxxx.supabase.co
+SUPABASE_ANON_KEY=eyJ...       # Frontend (öffentlich lesbar + insert)
+SUPABASE_SERVICE_KEY=eyJ...    # Nur Admin-Panel – niemals ins Frontend-Bundle!
+```
+
+---
+
+## Farbsystem
+
+```css
+/* Modul 27210 – Geschichte & Theorie des nachhaltigen Planens */
+--color-modul-27210:        #2D6A4F;   /* Dunkelgrün */
+--color-modul-27210-light:  #D8F3DC;   /* Hellgrün */
+
+/* Sem-1-Modul – Geschichte & Theorie der Architektur und Stadt I */
+--color-modul-sem1:         #1F4E79;   /* HAW-Dunkelblau */
+--color-modul-sem1-light:   #D6E4F0;   /* Hellblau */
+
+/* UI neutral */
+--color-bg:     #F8F9FA;
+--color-text:   #212529;
+--color-border: #DEE2E6;
+```
+
+---
+
+## Lokale Entwicklung
+
+```bash
+git clone https://github.com/<dein-handle>/nachhaltigkeitskarte-kiel.git
+cd nachhaltigkeitskarte-kiel
+
+cp .env.example .env.local
+# → SUPABASE_URL und SUPABASE_ANON_KEY eintragen
+
+npx serve .
+# → http://localhost:3000
+```
+
+Kein Build-Step nötig – reiner statischer Vanilla-Stack.
+
+---
+
+## Deployment (GitHub Pages)
+
+GitHub Pages auf Branch `main` / Root aktivieren:
+→ Repository Settings → Pages → Source: main / root
+
+```bash
+git add .
+git commit -m "feat: neues Gebäude KW26 SoSe2026"
+git push origin main
+# Seite aktualisiert sich automatisch
+```
+
+Der `SUPABASE_ANON_KEY` ist im Frontend sichtbar – das ist by design,
+Row-Level-Security schützt die Daten. Der `SERVICE_KEY` bleibt immer lokal.
+
+---
+
+## Roadmap
+
+- [x] v1.0 · Kartenansicht · Leaflet + OSM · Marker aus Supabase · Popup mit Performanceparametern
+- [ ] v1.1 · Upload-Formular · Supabase Insert · Koordinaten-Picker
+- [ ] v1.2 · Admin-Panel · Freigabe-Workflow
+- [ ] v1.3 · Filter + Suche · Farbcodierung nach Modul
+- [ ] v1.4 · Flyer-Template-Download (beide Farbvarianten)
+- [ ] v2.0 · GeoJSON-Export / Backup via GitHub Action
+- [ ] v2.1 · Erweiterung auf weitere Module / Kohorten
+
+---
+
+## Kontakt
+
+**Prof. Dr.-Ing. Christoph Göbel**
+Hochschule für Angewandte Wissenschaften Kiel · Fachbereich Medien / Bauwesen
+christoph.goebel@haw-kiel.de
+
+---
+
+*Lehrprojekt im Rahmen des Schwerpunkts Green Building, B.A. Architektur, HAW Kiel.*
+*Stack bewusst schlank und offen gehalten – damit die Karte nicht nur über Nachhaltigkeit redet.*

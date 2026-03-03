@@ -1,0 +1,25 @@
+# Umgebungsvariablen
+.env
+.env.local
+.env.*.local
+
+# OS
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Node (falls npx serve genutzt wird)
+node_modules/
+
+# Background-Materialien (nicht ins Repo)
+Background/
+
+# Claude Code Projektdaten
+.claude/

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nachhaltigkeitskarte Kiel – HAW Kiel</title>
+  <meta name="description" content="Interaktive Karte nachhaltiger Gebäude in Kiel – HAW Kiel, B.A. Architektur, Schwerpunkt Green Building">
+
+  <!-- Supabase-Credentials (Anon Key ist öffentlich – RLS schützt die Daten) -->
+  <meta name="supabase-url" content="https://xxxxxxxxxxxx.supabase.co">
+  <meta name="supabase-anon-key" content="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.placeholder">
+
+  <!-- Leaflet CSS (lokal, kein CDN → kein Datenabfluss) -->
+  <link rel="stylesheet" href="vendor/leaflet.css">
+
+  <!-- Eigene Styles (Verdana als CD-Ersatzschrift, kein externer Font-Load) -->
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/map.css">
+</head>
+<body>
+
+  <!-- Header (HAW-Blau gem. CD-Manual) -->
+  <header class="site-header">
+    <img src="assets/haw-logo.svg" alt="HAW Kiel" class="logo"
+         onerror="this.style.display='none'">
+    <div>
+      <h1>Nachhaltigkeitskarte Kiel</h1>
+      <span class="subtitle">HAW Kiel · B.A. Architektur · Green Building</span>
+    </div>
+  </header>
+
+  <!-- Karte -->
+  <div id="map"></div>
+
+  <!-- Status-Meldung -->
+  <div id="load-status">Karte wird geladen …</div>
+
+  <!-- Datenschutz-Hinweis (DSGVO: OSM-Kacheln übermitteln IP-Adresse) -->
+  <div class="privacy-notice" id="privacy-notice">
+    <span>
+      Diese Karte lädt Kartenkacheln von
+      <a href="https://operations.osmfoundation.org/policies/tiles/" target="_blank" rel="noopener">OpenStreetMap</a>.
+      Dabei wird Ihre IP-Adresse an die OSM-Server übermittelt.
+      Es werden keine Cookies gesetzt und keine weiteren Daten erhoben.
+    </span>
+    <button onclick="document.getElementById('privacy-notice').classList.add('hidden')">Verstanden</button>
+  </div>
+
+  <!-- Leaflet JS (lokal) -->
+  <script src="vendor/leaflet.js"></script>
+
+  <!-- Supabase JS (lokal) -->
+  <script src="vendor/supabase.min.js"></script>
+
+  <!-- App -->
+  <script type="module" src="js/map.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,127 @@
+/* ── Custom Properties ────────────────────────────────────────────
+   Farben: HAW Kiel CD-Manual (Stand 12/2025) + Modulfarben aus README
+   Schrift: Verdana (CD-Ersatzschrift, systemweit verfügbar)
+   ──────────────────────────────────────────────────────────────── */
+:root {
+  /* HAW Corporate Design */
+  --color-haw-blau:          #00305D;
+  --color-haw-hellblau:      #85C3DF;
+  --color-haw-orange:        #D67B19;
+
+  /* Modul 27210 – Geschichte & Theorie des nachhaltigen Planens */
+  --color-modul-27210:       #2D6A4F;
+  --color-modul-27210-light: #D8F3DC;
+
+  /* Sem-1-Modul – Geschichte & Theorie der Architektur und Stadt I */
+  --color-modul-sem1:        #1F4E79;
+  --color-modul-sem1-light:  #D6E4F0;
+
+  /* UI neutral */
+  --color-bg:     #F8F9FA;
+  --color-text:   #212529;
+  --color-border: #DEE2E6;
+
+  /* Schrift: Verdana als CD-Ersatzschrift (lokal, kein externer Load) */
+  --font-main: Verdana, Geneva, sans-serif;
+}
+
+/* ── Reset & Basis ──────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  height: 100%;
+  font-family: var(--font-main);
+  color: var(--color-text);
+  background: var(--color-bg);
+}
+
+/* ── Header ─────────────────────────────────────────────────────── */
+.site-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1.5rem;
+  background: var(--color-haw-blau);
+  color: #fff;
+  z-index: 1000;
+  position: relative;
+}
+
+.site-header .logo {
+  height: 36px;
+  width: auto;
+}
+
+.site-header h1 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: #fff;
+}
+
+.site-header .subtitle {
+  font-size: 0.75rem;
+  color: var(--color-haw-hellblau);
+  font-weight: 400;
+}
+
+/* ── Status-Meldung ─────────────────────────────────────────────── */
+#load-status {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255, 255, 255, 0.95);
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  font-size: 0.85rem;
+  z-index: 1000;
+  pointer-events: none;
+}
+
+#load-status:empty {
+  display: none;
+}
+
+/* ── Datenschutz-Hinweis ────────────────────────────────────────── */
+.privacy-notice {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--color-haw-blau);
+  color: #fff;
+  padding: 0.75rem 1.5rem;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.privacy-notice a {
+  color: var(--color-haw-hellblau);
+}
+
+.privacy-notice button {
+  flex-shrink: 0;
+  background: #fff;
+  color: var(--color-haw-blau);
+  border: none;
+  padding: 0.4rem 1rem;
+  border-radius: 4px;
+  font-family: var(--font-main);
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.privacy-notice.hidden {
+  display: none;
+}
