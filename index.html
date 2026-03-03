@@ -3,30 +3,41 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nachhaltigkeitskarte Kiel – HAW Kiel</title>
-  <meta name="description" content="Interaktive Karte nachhaltiger Gebäude in Kiel – HAW Kiel, B.A. Architektur, Schwerpunkt Green Building">
+  <title>GTASnP – Karte der Geschichte und Theorie der Architektur, der Stadt und der Nachhaltigen Planung</title>
+  <meta name="description" content="Interaktive Karte nachhaltiger und architekturhistorisch bedeutsamer Gebäude in Kiel – HAW Kiel, B.A. Architektur">
+
+  <!-- Favicon (HAW-Winkelzeichen) -->
+  <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
 
   <!-- Supabase-Credentials (Anon Key ist öffentlich – RLS schützt die Daten) -->
   <meta name="supabase-url" content="https://xxxxxxxxxxxx.supabase.co">
   <meta name="supabase-anon-key" content="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.placeholder">
 
-  <!-- Leaflet CSS (lokal, kein CDN → kein Datenabfluss) -->
+  <!-- Leaflet CSS (lokal, kein CDN) -->
   <link rel="stylesheet" href="vendor/leaflet.css">
 
-  <!-- Eigene Styles (Verdana als CD-Ersatzschrift, kein externer Font-Load) -->
+  <!-- Eigene Styles -->
   <link rel="stylesheet" href="css/main.css">
   <link rel="stylesheet" href="css/map.css">
 </head>
 <body>
 
-  <!-- Header (HAW-Blau gem. CD-Manual) -->
+  <!-- Header -->
   <header class="site-header">
-    <img src="assets/haw-logo.svg" alt="HAW Kiel" class="logo"
-         onerror="this.style.display='none'">
-    <div>
-      <h1>Nachhaltigkeitskarte Kiel</h1>
-      <span class="subtitle">HAW Kiel · B.A. Architektur · Green Building</span>
+    <div class="header-left">
+      <h1 class="site-title">GTASnP</h1>
+      <span class="site-subtitle">Karte der Geschichte und Theorie der Architektur, der Stadt und der Nachhaltigen Planung</span>
+      <nav class="header-meta">
+        <a href="https://www.haw-kiel.de/studium/studienangebot/architektur/architektur-ba/inhalte-des-studiums/" target="_blank" rel="noopener">B.A. Architektur</a>
+        <span class="meta-sep">&middot;</span>
+        <a href="https://www.haw-kiel.de/en/person/nikolaus-knebel-1/" target="_blank" rel="noopener">Prof. Nikolaus Knebel</a>
+        <span class="meta-sep">&amp;</span>
+        <a href="https://www.haw-kiel.de/en/person/christoph-goebel-1/" target="_blank" rel="noopener">Prof. Christoph Göbel</a>
+      </nav>
     </div>
+    <a href="https://www.haw-kiel.de" target="_blank" rel="noopener" class="header-logo-link">
+      <img src="assets/haw-logo.svg" alt="HAW Kiel" class="logo">
+    </a>
   </header>
 
   <!-- Karte -->
@@ -35,7 +46,7 @@
   <!-- Status-Meldung -->
   <div id="load-status">Karte wird geladen …</div>
 
-  <!-- Datenschutz-Hinweis (DSGVO: OSM-Kacheln übermitteln IP-Adresse) -->
+  <!-- Datenschutz-Hinweis (DSGVO) -->
   <div class="privacy-notice" id="privacy-notice">
     <span>
       Diese Karte lädt Kartenkacheln von

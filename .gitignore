@@ -21,5 +21,11 @@ node_modules/
 # Background-Materialien (nicht ins Repo)
 Background/
 
+# Gebäude-PDFs (zu groß für Git)
+Buildings/
+
+# Persönliche Notizen
+ToDo.txt
+
 # Claude Code Projektdaten
 .claude/

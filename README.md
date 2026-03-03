@@ -94,24 +94,29 @@ Gestaltung orientiert sich am **CD-Manual der HAW Kiel** (Stand 12/2025):
 nachhaltigkeitskarte-kiel/
 │
 ├── index.html                  # Einstiegspunkt – Kartenansicht
-├── upload.html                 # Upload-Formular für Studierende
-├── admin.html                  # Admin-Panel (Freigabe-Workflow)
+├── upload.html                 # Upload-Formular für Studierende (v1.1)
+├── admin.html                  # Admin-Panel (v1.2)
 │
 ├── css/
-│   ├── main.css                # Globale Styles, Custom Properties (Farben, Fonts)
-│   ├── map.css                 # Kartenspezifische Styles
-│   ├── upload.css              # Formular-Styles
-│   └── admin.css               # Admin-Styles
+│   ├── main.css                # Globale Styles, Custom Properties, HAW-CD-Farben
+│   ├── map.css                 # Kartenspezifische Styles, Marker, Popups, Legende
+│   ├── upload.css              # Formular-Styles (v1.1)
+│   └── admin.css               # Admin-Styles (v1.2)
 │
 ├── js/
-│   ├── map.js                  # Leaflet-Initialisierung, Marker, Popup, Filter
-│   ├── upload.js               # Upload-Formular-Logik, Supabase-Insert
-│   ├── admin.js                # Admin-Panel-Logik, Freigabe-Workflow
-│   └── supabase-client.js      # Supabase-Client-Konfiguration
+│   ├── map.js                  # Leaflet-Init, Marker, Popup, Legende
+│   ├── upload.js               # Upload-Formular-Logik (v1.1)
+│   ├── admin.js                # Admin-Panel-Logik (v1.2)
+│   └── supabase-client.js      # Supabase-Client (liest Credentials aus <meta>-Tags)
+│
+├── vendor/                     # Self-hosted Libs (DSGVO: kein CDN)
+│   ├── leaflet.css
+│   ├── leaflet.js              # Leaflet 1.9.4
+│   ├── supabase.min.js         # @supabase/supabase-js v2
+│   └── images/                 # Leaflet-UI-Assets (marker, layers)
 │
 ├── data/
-│   └── gebaeude.geojson        # Alle freigegebenen Gebäude (Fallback / Backup)
-│                               # Wird bei jedem Merge aus Supabase regeneriert
+│   └── gebaeude.geojson        # Freigegebene Gebäude (Fallback / Backup)
 │
 ├── templates/
 │   ├── flyer-gruen-A4.pdf      # Druckvorlage Modul 27210 (grün)
@@ -195,6 +200,11 @@ SUPABASE_SERVICE_KEY=eyJ...    # Nur Admin-Panel – niemals ins Frontend-Bundle
 ## Farbsystem
 
 ```css
+/* HAW Corporate Design (CD-Manual 12/2025) */
+--color-haw-blau:           #00305D;   /* Markenfarbe, RGB 0/48/93 */
+--color-haw-hellblau:       #85C3DF;   /* Akzent, RGB 133/195/223 */
+--color-haw-orange:         #D67B19;   /* Markierung, RGB 214/123/25 */
+
 /* Modul 27210 – Geschichte & Theorie des nachhaltigen Planens */
 --color-modul-27210:        #2D6A4F;   /* Dunkelgrün */
 --color-modul-27210-light:  #D8F3DC;   /* Hellgrün */
@@ -214,7 +224,7 @@ SUPABASE_SERVICE_KEY=eyJ...    # Nur Admin-Panel – niemals ins Frontend-Bundle
 ## Lokale Entwicklung
 
 ```bash
-git clone https://github.com/<dein-handle>/nachhaltigkeitskarte-kiel.git
+git clone https://github.com/ctib/nachhaltigkeitskarte-kiel.git
 cd nachhaltigkeitskarte-kiel
 
 cp .env.example .env.local

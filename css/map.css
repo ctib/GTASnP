@@ -1,7 +1,7 @@
 /* ── Karten-Container ────────────────────────────────────────────── */
 #map {
   width: 100%;
-  height: calc(100vh - 56px);
+  height: calc(100vh - 72px);
 }
 
 /* ── Marker-Icons (CSS-only, kein Bilddatei-Bedarf) ─────────────── */
