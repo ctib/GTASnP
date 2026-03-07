@@ -7,8 +7,8 @@
 
 const supabase = window._supabaseAuth
   || window.supabase.createClient(
-    document.querySelector('meta[name="supabase-url"]')?.content || 'https://kwwyyuqwrkgyyaxnaipe.supabase.co',
-    document.querySelector('meta[name="supabase-anon-key"]')?.content || 'sb_publishable_eapfujf9HCWaFhMLZmQaVQ_FvcBiDnD'
+    document.querySelector('meta[name="supabase-url"]').content,
+    document.querySelector('meta[name="supabase-anon-key"]').content
   );
 
 export { supabase };

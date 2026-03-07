@@ -7,8 +7,8 @@
  */
 
 (function () {
-  const SUPABASE_URL = 'https://kwwyyuqwrkgyyaxnaipe.supabase.co';
-  const SUPABASE_ANON_KEY = 'sb_publishable_eapfujf9HCWaFhMLZmQaVQ_FvcBiDnD';
+  const SUPABASE_URL = document.querySelector('meta[name="supabase-url"]').content;
+  const SUPABASE_ANON_KEY = document.querySelector('meta[name="supabase-anon-key"]').content;
 
   const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
