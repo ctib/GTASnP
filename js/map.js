@@ -21,7 +21,7 @@ legend.onAdd = function () {
   const div = L.DomUtil.create('div', 'map-legend');
   div.innerHTML = `
     <h4>Module</h4>
-    <div class="legend-item"><span class="legend-dot gruen"></span> Nachhaltiges Planen (27210)</div>
+    <div class="legend-item"><span class="legend-dot gruen"></span> Nachhaltiges Planen</div>
     <div class="legend-item"><span class="legend-dot blau"></span> Gesch. & Theorie I</div>
   `;
   return div;
