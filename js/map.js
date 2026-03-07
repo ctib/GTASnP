@@ -15,15 +15,80 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   maxZoom: 19
 }).addTo(map);
 
+// ── Exkursions-Trails ───────────────────────────────────────────────
+// Tag 1 (12.12.): Fördetower → Sartori & Berger → IHK → Werkstatthaus Muthesius
+//   → Arbeitsamt → KirchenKai → [Pause] → Wohnstift → Europaplatz → [Bus] → St. Lukas
+const trail1Coords = [
+  [54.3111, 10.1292], // Fördetower
+  [54.3217, 10.1427], // Sartori & Berger
+  [54.3265, 10.1353], // IHK
+  [54.3278, 10.1292], // Werkstatthaus Muthesius
+  [54.3231, 10.1217], // Arbeitsamt
+  [54.3225, 10.1315], // KirchenKai
+  [54.3242, 10.1388], // Wohnstift
+  [54.3207, 10.1327], // Europaplatz
+  [54.3579, 10.1299]  // St. Lukas
+];
+
+// Tag 2 (19.12.): Marine-Intendantur → IBZ → Finanzamt → Ricarda-Huch-Schule
+//   → [Pause] → Mensa CAU → Urban Mining → Studentendorf → Sportforum
+const trail2Coords = [
+  [54.3344, 10.1525], // Marine-Intendantur
+  [54.3286, 10.1470], // IBZ
+  [54.3333, 10.1391], // Finanzamt
+  [54.3369, 10.1269], // Ricarda-Huch-Schule
+  [54.3375, 10.1228], // Mensa CAU
+  [54.3450, 10.1103], // Urban Mining
+  [54.3414, 10.1170], // Studentendorf
+  [54.3433, 10.1148]  // Sportforum
+];
+
+const trail1Line = L.polyline(trail1Coords, {
+  color: '#D67B19',
+  weight: 3,
+  opacity: 0.8,
+  dashArray: '8, 6',
+  interactive: false
+});
+
+const trail2Line = L.polyline(trail2Coords, {
+  color: '#85C3DF',
+  weight: 3,
+  opacity: 0.8,
+  dashArray: '8, 6',
+  interactive: false
+});
+
 // ── Legende ────────────────────────────────────────────────────────
 const legend = L.control({ position: 'bottomright' });
 legend.onAdd = function () {
   const div = L.DomUtil.create('div', 'map-legend');
+  L.DomEvent.disableClickPropagation(div);
+
   div.innerHTML = `
     <h4>Module</h4>
     <div class="legend-item"><span class="legend-dot gruen"></span> Nachhaltiges Planen</div>
     <div class="legend-item"><span class="legend-dot blau"></span> Gesch. & Theorie I</div>
+    <h4 class="legend-trail-heading">Exkursionen</h4>
+    <label class="legend-item legend-trail-item">
+      <input type="checkbox" id="trail1-toggle">
+      <span class="legend-trail" style="border-color: #D67B19"></span>
+      Exkursion 12.12.
+    </label>
+    <label class="legend-item legend-trail-item">
+      <input type="checkbox" id="trail2-toggle">
+      <span class="legend-trail" style="border-color: #85C3DF"></span>
+      Exkursion 19.12.
+    </label>
   `;
+
+  div.querySelector('#trail1-toggle').addEventListener('change', function () {
+    this.checked ? map.addLayer(trail1Line) : map.removeLayer(trail1Line);
+  });
+  div.querySelector('#trail2-toggle').addEventListener('change', function () {
+    this.checked ? map.addLayer(trail2Line) : map.removeLayer(trail2Line);
+  });
+
   return div;
 };
 legend.addTo(map);
@@ -61,12 +126,17 @@ function createPopupContent(g) {
     ? `<p class="popup-architekt">Arch.: ${g.architekt}</p>`
     : '';
 
+  const kurztext = g.bewertung_kurz
+    ? `<p class="popup-kurztext">${g.bewertung_kurz}</p>`
+    : '';
+
   return `
     <div class="popup-content">
       <h3 class="popup-title">${g.name}</h3>
       <p class="popup-address">${g.adresse}${g.baujahr ? ` &middot; ${g.baujahr}` : ''}</p>
       ${architekt}
       ${stilBadge}
+      ${kurztext}
       <a class="popup-details-link" data-gebaeude-id="${g.id}">Details &rarr;</a>
     </div>
   `;
