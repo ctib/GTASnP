@@ -2,6 +2,11 @@
 #map {
   width: 100%;
   height: calc(100vh - 72px);
+  transition: width 0.3s ease;
+}
+
+#map.sidebar-open {
+  width: calc(100% - 380px);
 }
 
 /* ── Marker-Icons (CSS-only, kein Bilddatei-Bedarf) ─────────────── */
@@ -20,12 +25,12 @@
   background: var(--color-modul-sem1);
 }
 
-/* ── Popup-Styles ────────────────────────────────────────────────── */
+/* ── Popup-Styles (kompakt) ──────────────────────────────────────── */
 .popup-content {
   font-family: var(--font-main);
   font-size: 0.8rem;
   line-height: 1.5;
-  max-width: 300px;
+  max-width: 240px;
 }
 
 .popup-title {
@@ -37,44 +42,47 @@
 
 .popup-address {
   color: #6c757d;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.25rem;
   font-size: 0.75rem;
 }
 
-.popup-bewertung {
-  margin-bottom: 0.5rem;
-}
-
-.popup-params {
-  list-style: none;
-  margin: 0.5rem 0;
-  padding: 0.5rem;
-  background: var(--color-bg);
-  border-radius: 4px;
+.popup-architekt {
   font-size: 0.75rem;
+  color: var(--color-text);
+  margin-bottom: 0.4rem;
 }
 
-.popup-params li {
-  padding: 0.15rem 0;
+.stil-badge {
+  display: inline-block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  padding: 0.15rem 0.5rem;
+  border-radius: 10px;
+  color: #fff;
+  margin-bottom: 0.4rem;
 }
 
-.popup-params li + li {
-  border-top: 1px solid var(--color-border);
+.stil-badge.modul-27210 {
+  background: var(--color-modul-27210);
 }
 
-.popup-thumbnail {
-  width: 100%;
-  max-height: 180px;
-  object-fit: cover;
-  border-radius: 4px;
-  margin: 0.5rem 0;
+.stil-badge.modul-sem1 {
+  background: var(--color-modul-sem1);
 }
 
-.popup-meta {
-  font-size: 0.7rem;
-  color: #6c757d;
-  margin-top: 0.4rem;
-  font-style: italic;
+.popup-details-link {
+  display: inline-block;
+  margin-top: 0.3rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--color-haw-blau);
+  cursor: pointer;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.15s;
+}
+
+.popup-details-link:hover {
+  border-bottom-color: var(--color-haw-blau);
 }
 
 /* ── Leaflet-Overrides ───────────────────────────────────────────── */
@@ -117,3 +125,176 @@
 
 .legend-dot.gruen { background: var(--color-modul-27210); }
 .legend-dot.blau  { background: var(--color-modul-sem1); }
+
+/* ── Sidebar (Detail-Panel) ──────────────────────────────────────── */
+.sidebar {
+  position: fixed;
+  top: 72px;
+  right: 0;
+  width: 380px;
+  height: calc(100vh - 72px);
+  background: #fff;
+  box-shadow: -2px 0 12px rgba(0, 0, 0, 0.12);
+  z-index: 900;
+  overflow-y: auto;
+  transform: translateX(100%);
+  transition: transform 0.3s ease;
+}
+
+.sidebar.open {
+  transform: translateX(0);
+}
+
+.sidebar.hidden {
+  transform: translateX(100%);
+}
+
+.sidebar-close {
+  position: sticky;
+  top: 0;
+  float: right;
+  margin: 0.6rem 0.8rem 0 0;
+  background: none;
+  border: none;
+  font-size: 1.6rem;
+  line-height: 1;
+  color: #6c757d;
+  cursor: pointer;
+  z-index: 10;
+  transition: color 0.15s;
+}
+
+.sidebar-close:hover {
+  color: var(--color-text);
+}
+
+.sidebar-body {
+  padding: 1.2rem 1.4rem 2rem;
+  clear: both;
+}
+
+/* Sidebar sections */
+.sidebar-thumbnail {
+  width: 100%;
+  max-height: 220px;
+  object-fit: cover;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+}
+
+.sidebar-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--color-haw-blau);
+  margin-bottom: 0.2rem;
+}
+
+.sidebar-address {
+  font-size: 0.8rem;
+  color: #6c757d;
+  margin-bottom: 0.15rem;
+}
+
+.sidebar-architekt {
+  font-size: 0.8rem;
+  color: var(--color-text);
+  margin-bottom: 0.6rem;
+}
+
+.sidebar-section {
+  margin-top: 1.2rem;
+}
+
+.sidebar-section-title {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #6c757d;
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: 0.25rem;
+  margin-bottom: 0.5rem;
+}
+
+.sidebar-description {
+  font-size: 0.8rem;
+  line-height: 1.6;
+  color: var(--color-text);
+}
+
+/* Performance table */
+.sidebar-params {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+}
+
+.sidebar-params td {
+  padding: 0.3rem 0;
+}
+
+.sidebar-params td:first-child {
+  color: #6c757d;
+  padding-right: 1rem;
+}
+
+.sidebar-params tr + tr td {
+  border-top: 1px solid var(--color-border);
+}
+
+/* Modul line */
+.sidebar-modul {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+}
+
+.sidebar-modul-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.sidebar-modul-dot.modul-27210 { background: var(--color-modul-27210); }
+.sidebar-modul-dot.modul-sem1   { background: var(--color-modul-sem1); }
+
+.sidebar-autoren {
+  font-size: 0.8rem;
+  color: var(--color-text);
+}
+
+/* Flyer download button */
+.sidebar-download {
+  display: block;
+  width: 100%;
+  margin-top: 1.4rem;
+  padding: 0.6rem 1rem;
+  background: var(--color-haw-blau);
+  color: #fff;
+  font-family: var(--font-main);
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-align: center;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background 0.15s;
+}
+
+.sidebar-download:hover {
+  background: #004080;
+}
+
+/* ── Responsive ──────────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .sidebar {
+    width: 100vw;
+  }
+
+  #map.sidebar-open {
+    width: 100%;
+  }
+}

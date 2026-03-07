@@ -1,6 +1,5 @@
 /**
- * map.js – Leaflet-Karteninitialisierung, Marker, Popups, Legende
- * v1.0: Kartenansicht mit Gebäude-Markern aus Supabase
+ * map.js – Leaflet-Karteninitialisierung, Marker, Popups, Detail-Sidebar
  */
 
 import { supabase } from './supabase-client.js';
@@ -45,39 +44,154 @@ const markerIcons = {
   })
 };
 
-// ── Popup-HTML erzeugen ────────────────────────────────────────────
+// ── Sidebar-Elemente ───────────────────────────────────────────────
+const sidebarEl = document.getElementById('sidebar');
+const sidebarBody = document.getElementById('sidebar-body');
+const sidebarCloseBtn = document.getElementById('sidebar-close');
+
+// ── Popup-HTML erzeugen (kompakt) ──────────────────────────────────
 function createPopupContent(g) {
-  const params = [];
-  if (g.heizlast_kw != null)      params.push(`<li><strong>Heizlast:</strong> ${g.heizlast_kw} kW</li>`);
-  if (g.waermebedarf_mwh != null)  params.push(`<li><strong>Wärmebedarf:</strong> ${g.waermebedarf_mwh} MWh/a</li>`);
-  if (g.embodied_carbon != null)   params.push(`<li><strong>Embodied Carbon:</strong> ${g.embodied_carbon} kgCO₂e/m²</li>`);
-  if (g.carbon_footprint != null)  params.push(`<li><strong>Carbon Footprint:</strong> ${g.carbon_footprint} tCO₂e/a</li>`);
+  const badgeClass = g.modul === '27210' ? 'modul-27210' : 'modul-sem1';
 
-  const paramList = params.length > 0
-    ? `<ul class="popup-params">${params.join('')}</ul>`
+  const stilBadge = g.stil
+    ? `<span class="stil-badge ${badgeClass}">${g.stil}</span><br>`
     : '';
 
-  const thumbnail = g.thumbnail_url
-    ? `<a href="${g.flyer_url}" target="_blank" rel="noopener"><img class="popup-thumbnail" src="${g.thumbnail_url}" alt="Flyer ${g.name}"></a>`
+  const architekt = g.architekt
+    ? `<p class="popup-architekt">Arch.: ${g.architekt}</p>`
     : '';
-
-  const modulLabel = g.modul === '27210'
-    ? 'Nachhaltiges Planen (27210)'
-    : 'Gesch. & Theorie I';
 
   return `
     <div class="popup-content">
       <h3 class="popup-title">${g.name}</h3>
-      <p class="popup-address">${g.adresse}${g.baujahr ? ` · ${g.baujahr}` : ''}</p>
-      ${g.bewertung_kurz ? `<p class="popup-bewertung">${g.bewertung_kurz}</p>` : ''}
-      ${paramList}
-      ${thumbnail}
-      <p class="popup-meta">${modulLabel} · ${g.semester || ''}</p>
+      <p class="popup-address">${g.adresse}${g.baujahr ? ` &middot; ${g.baujahr}` : ''}</p>
+      ${architekt}
+      ${stilBadge}
+      <a class="popup-details-link" data-gebaeude-id="${g.id}">Details &rarr;</a>
     </div>
   `;
 }
 
+// ── Sidebar-HTML erzeugen ──────────────────────────────────────────
+function buildSidebarHTML(g) {
+  const parts = [];
+
+  // Thumbnail
+  if (g.thumbnail_url) {
+    parts.push(`<img class="sidebar-thumbnail" src="${g.thumbnail_url}" alt="${g.name}">`);
+  }
+
+  // Titel + Adresse + Architekt
+  parts.push(`<h2 class="sidebar-title">${g.name}</h2>`);
+  parts.push(`<p class="sidebar-address">${g.adresse}${g.baujahr ? ` &middot; ${g.baujahr}` : ''}</p>`);
+  if (g.architekt) {
+    parts.push(`<p class="sidebar-architekt">${g.architekt}</p>`);
+  }
+
+  // Stil-Badge
+  if (g.stil) {
+    const badgeClass = g.modul === '27210' ? 'modul-27210' : 'modul-sem1';
+    parts.push(`<span class="stil-badge ${badgeClass}">${g.stil}</span>`);
+  }
+
+  // Beschreibung
+  if (g.bewertung_kurz) {
+    parts.push(`
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Beschreibung</div>
+        <p class="sidebar-description">${g.bewertung_kurz}</p>
+      </div>
+    `);
+  }
+
+  // Performance (nur wenn mindestens ein Wert vorhanden)
+  const params = [];
+  if (g.heizlast_kw != null)     params.push(['Heizlast', `${g.heizlast_kw} kW`]);
+  if (g.waermebedarf_mwh != null) params.push(['Wärmebedarf', `${g.waermebedarf_mwh} MWh/a`]);
+  if (g.embodied_carbon != null)  params.push(['Embodied Carbon', `${g.embodied_carbon} kgCO₂e/m²`]);
+  if (g.carbon_footprint != null) params.push(['Carbon Footprint', `${g.carbon_footprint} tCO₂e/a`]);
+
+  if (params.length > 0) {
+    const rows = params.map(([k, v]) => `<tr><td>${k}</td><td><strong>${v}</strong></td></tr>`).join('');
+    parts.push(`
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Performance</div>
+        <table class="sidebar-params">${rows}</table>
+      </div>
+    `);
+  }
+
+  // Modul
+  const modulLabel = g.modul === '27210'
+    ? 'Nachhaltiges Planen (27210)'
+    : 'Gesch. & Theorie I';
+  const dotClass = g.modul === '27210' ? 'modul-27210' : 'modul-sem1';
+
+  parts.push(`
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Modul</div>
+      <div class="sidebar-modul">
+        <span class="sidebar-modul-dot ${dotClass}"></span>
+        ${modulLabel}${g.semester ? ` &middot; ${g.semester}` : ''}
+      </div>
+    </div>
+  `);
+
+  // Autoren
+  if (g.autoren) {
+    parts.push(`
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Bearbeitet von</div>
+        <p class="sidebar-autoren">${g.autoren}</p>
+      </div>
+    `);
+  }
+
+  // Flyer-Download
+  if (g.flyer_url) {
+    parts.push(`<a class="sidebar-download" href="${g.flyer_url}" target="_blank" rel="noopener">Flyer herunterladen (PDF)</a>`);
+  }
+
+  return parts.join('');
+}
+
+// ── Sidebar öffnen / schließen ─────────────────────────────────────
+function openSidebar(g) {
+  sidebarBody.innerHTML = buildSidebarHTML(g);
+  sidebarEl.classList.remove('hidden');
+  // Force reflow so transition fires
+  void sidebarEl.offsetWidth;
+  sidebarEl.classList.add('open');
+  document.getElementById('map').classList.add('sidebar-open');
+  map.invalidateSize();
+}
+
+function closeSidebar() {
+  sidebarEl.classList.remove('open');
+  document.getElementById('map').classList.remove('sidebar-open');
+  map.invalidateSize();
+  // Remove hidden after transition ends
+  sidebarEl.addEventListener('transitionend', function handler() {
+    if (!sidebarEl.classList.contains('open')) {
+      sidebarEl.classList.add('hidden');
+    }
+    sidebarEl.removeEventListener('transitionend', handler);
+  });
+}
+
+// Close button
+sidebarCloseBtn.addEventListener('click', closeSidebar);
+
+// Click on map closes sidebar
+map.on('click', () => {
+  if (sidebarEl.classList.contains('open')) {
+    closeSidebar();
+  }
+});
+
 // ── Gebäude laden und Marker setzen ────────────────────────────────
+let gebaeudeMap = {};
+
 async function loadGebaeude() {
   const { data, error } = await supabase
     .from('gebaeude')
@@ -99,11 +213,26 @@ async function loadGebaeude() {
 
   document.getElementById('load-status').textContent = '';
 
+  // Index for sidebar lookup
+  data.forEach(g => { gebaeudeMap[g.id] = g; });
+
   data.forEach(g => {
     const icon = markerIcons[g.modul] || markerIcons['27210'];
-    L.marker([g.lat, g.lng], { icon })
+    const marker = L.marker([g.lat, g.lng], { icon })
       .addTo(map)
-      .bindPopup(createPopupContent(g), { maxWidth: 320 });
+      .bindPopup(createPopupContent(g), { maxWidth: 260 });
+
+    // Delegate click on "Details →" inside popup
+    marker.on('popupopen', () => {
+      const link = document.querySelector(`.popup-details-link[data-gebaeude-id="${g.id}"]`);
+      if (link) {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          map.closePopup();
+          openSidebar(g);
+        });
+      }
+    });
   });
 }
 
