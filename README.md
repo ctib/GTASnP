@@ -112,6 +112,7 @@ GTdnP/
 │   └── images/                 # Leaflet-UI-Assets (marker, layers)
 │
 ├── data/
+│   ├── create-table.sql        # CREATE TABLE gebaeude + RLS-Policies
 │   ├── seed-ibsh.sql           # Seed-Daten IB.SH Kiel
 │   ├── remove-geschtheorie1.sql  # GeschTheorie1-Gebäude deaktivieren
 │   └── archive/                # Archivierte SQL-Seeds (ehem. GeschTheorie1)
@@ -146,6 +147,8 @@ create table gebaeude (
   lat              float8 not null,
   lng              float8 not null,
   baujahr          int,
+  architekt        text,
+  stil             text,
   beschreibung     text,
   bewertung_kurz   text,           -- max. 300 Zeichen für Popup
 
@@ -163,6 +166,9 @@ create table gebaeude (
   -- Assets
   flyer_url        text,           -- Supabase Storage URL
   thumbnail_url    text,
+
+  -- Autoren / Bearbeiter
+  autoren          text,
 
   -- Workflow
   status           text default 'pending' check (status in ('pending', 'approved', 'rejected')),
@@ -223,8 +229,8 @@ SUPABASE_SERVICE_KEY=eyJ...    # Nur Admin-Panel – niemals ins Frontend-Bundle
 ## Lokale Entwicklung
 
 ```bash
-git clone https://github.com/ctib/GTdnP.git
-cd GTdnP
+git clone https://github.com/ctib/GTASnP.git
+cd GTASnP
 
 npx serve .
 # → http://localhost:3000
